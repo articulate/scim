@@ -6,9 +6,8 @@ This is an open source implementation of the [SCIM v2.0](http://www.simplecloud.
 SCIM defines a flexible schema mechanism and REST API for managing identity data.
 The goal is to reduce the complexity of user management operations by providing patterns for exchanging schemas using HTTP.
 
-In this implementation it is easy to add *custom* schemas and extensions whom are validated at the initialization of the server.
-Corresponding with their resource type, incoming resources will be *validated* by the supported schemas before being 
-passed on to their callbacks.
+In this implementation it is easy to add *custom* schemas and extensions with the provided [structures](https://godoc.org/github.com/elimity-com/scim/schema/).
+Incoming resources will be *validated*, corresponding with their resource type, by the supported schemas before being passed on to their callbacks.
 
 The following features are supported:
 - GET for `/Schemas`, `/ServiceProviderConfig` and `/ResourceTypes`
@@ -116,7 +115,7 @@ but please first discuss the change you wish to make via issue, email,
 or any other method with the owners of this repository before making a change.
 
 If you’d like to propose a change please ensure the following:
-- all checks of CircleCI are passing ([golangci-lint](https://github.com/golangci/golangci-lint): `goimports` and `golint`)
+- all checks of CircleCI are passing ([GolangCI-Lint](https://github.com/golangci/golangci-lint): `goimports` and `golint`)
 - all already existing tests are passing
 - you have written tests that cover the code you are making
 - there is documentation for at least all public functions you have added

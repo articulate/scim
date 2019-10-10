@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/elimity-com/scim/filter"
 	"github.com/elimity-com/scim/schema"
 )
 
@@ -64,7 +65,7 @@ func (s Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				s.resourcePostHandler(w, r, resourceType)
 				return
 			case http.MethodGet:
-				requestParams, paramsErr := parseRequestParams(r)
+				requestParams, paramsErr := parseRequestParams(r, resourceType)
 
 				if paramsErr != nil {
 					errorHandler(w, r, *paramsErr)
@@ -119,8 +120,11 @@ func getPositiveIntQueryParam(r *http.Request, key string, def int) (int, error)
 	return 0, fmt.Errorf("invalid query parameter, \"%s\" must be an integer", key)
 }
 
-func parseRequestParams(r *http.Request) (response ListRequestParams, err *scimError) {
-	var invalidParams []string
+func parseRequestParams(r *http.Request, resourceType ResourceType) (ListRequestParams, *scimError) {
+	var (
+		invalidParams []string
+		response      ListRequestParams
+	)
 
 	count, ctErr := getPositiveIntQueryParam(r, "count", defaultCount)
 	startIndex, idxErr := getPositiveIntQueryParam(r, "startIndex", defaultStartIndex)
@@ -135,17 +139,23 @@ func parseRequestParams(r *http.Request) (response ListRequestParams, err *scimE
 
 	if len(invalidParams) > 1 {
 		badReqErr := scimErrorBadRequest(invalidParams)
-		err = &badReqErr
+		return response, &badReqErr
 	}
 
 	if count > maxCount {
 		count = maxCount
 	}
 
-	response = ListRequestParams{
-		Count:      count,
-		StartIndex: startIndex,
+	filter, err := filter.NewParser(r.URL.Query().Get("filter"))
+
+	if err != nil {
+		badReqErr := scimErrorBadRequest([]string{"filter"})
+		return response, &badReqErr
 	}
 
-	return
+	return ListRequestParams{
+		Count:        count,
+		StartIndex:   startIndex,
+		FilterParser: filter,
+	}, nil
 }

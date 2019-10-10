@@ -5,6 +5,7 @@ import (
 	"net/url"
 
 	"github.com/elimity-com/scim/errors"
+	"github.com/elimity-com/scim/filter"
 )
 
 type (
@@ -14,6 +15,9 @@ type (
 		// SHALL be interpreted as "0". A value of "0" indicates that no resource
 		// results are to be returned except for "totalResults".
 		Count int
+
+		// FilterParser exposes utility functions for determining how to filter a list request.
+		FilterParser *filter.Parser
 
 		// StartIndex The 1-based index of the first query result.
 		// A value less than 1 SHALL be interpreted as 1.

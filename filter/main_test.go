@@ -85,6 +85,13 @@ func TestFilterParser(t *testing.T) {
 			joins:        joins,
 			attributeMap: attrMap,
 		},
+		{
+			filter:       `emails[type eq "work" and value co "@example.com"] or ims[type eq "xmpp" and value co "@foo.com"]`,
+			expected:     "SELECT * FROM users LEFT JOIN emails ON emails.user_id = users.id WHERE ((emails.type = ? AND emails.value LIKE %?%) OR ( = ? AND  LIKE %?%))",
+			params:       []interface{}{[]string{"work", "@example.com", "xmpp", "@foo.com"}},
+			joins:        joins,
+			attributeMap: attrMap,
+		},
 	}
 
 	for _, test := range tests {

@@ -35,10 +35,6 @@ type listResponse struct {
 }
 
 func (l listResponse) MarshalJSON() ([]byte, error) {
-	// Allows json.Marshall to return [] instead of null
-	if len(l.Resources) < 1 {
-		l.Resources = make([]interface{}, 0)
-	}
 	return json.Marshal(map[string]interface{}{
 		"schemas":      []string{"urn:ietf:params:scim:api:messages:2.0:ListResponse"},
 		"totalResults": l.TotalResults,

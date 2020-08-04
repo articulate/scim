@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"reflect"
 	"regexp"
+	"strconv"
 	"strings"
 
 	datetime "github.com/di-wu/xsd-datetime"
@@ -144,7 +145,15 @@ func (a CoreAttribute) validateSingular(attribute interface{}) (interface{}, err
 	case attributeDataTypeBoolean:
 		b, ok := attribute.(bool)
 		if !ok {
-			return nil, errors.ValidationErrorInvalidValue
+			s, ok := attribute.(string)
+			if !ok {
+				return nil, errors.ValidationErrorInvalidValue
+			}
+			nb, err := strconv.ParseBool(s)
+			if err != nil {
+				return nil, errors.ValidationErrorInvalidValue
+			}
+			return nb, errors.ValidationErrorNil
 		}
 		return b, errors.ValidationErrorNil
 	case attributeDataTypeComplex:
